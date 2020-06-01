@@ -99,7 +99,14 @@ def parse_geographic_columns(gisaid_data: pd.DataFrame) -> pd.DataFrame:
     location_columns = ['region', 'country', 'division', 'location']
 
     for column, index in zip(location_columns, range(len(location_columns))):
-        gisaid_data[column] = geographic_data[index].str.replace('_', ' ').str.strip()
+        gisaid_data[column] = geographic_data[index] \
+            .str.replace('_', ' ') \
+            .str.strip() \
+            .str.title()
+
+        # Manual fixes for non-title case locations
+        gisaid_data.loc[
+            (pd.notnull(gisaid_data[column]) & (gisaid_data[column] == 'Usa')), column] = 'USA'
 
     return gisaid_data
 
